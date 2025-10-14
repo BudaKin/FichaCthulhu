@@ -1,0 +1,19 @@
+# core/data.py
+SKILLS = [
+    "Agarrar", "Antropologia", "Arqueologia", "Arremessar", "Arte", "Artes Marciais/Briga",
+    "Astronomia", "Barganha", "Biologia", "Cabeçada", "Cavalgar", "Chaveiro", "Chute",
+    "Computação", "Contabilidade", "Crédito", "Direito", "Dirigir Automóvel/Cavalos",
+    "Disfarce", "Eletrônica", "Escalar", "Esconder", "Escutar", "Espingarda", "Esquiva",
+    "Farmácia", "Física", "Fotografia", "Furtividade", "Geologia", "História", "História Natural",
+    "Intimidação", "Lábia", "Língua Nativa", "Localizar", "Medicina", "Metralhadora", "Nadar",
+    "Navegar", "Ocultar", "Ocultismo", "Ofício", "Operar Máquina Pesada", "Outra Língua", "Persuadir",
+    "Pesquisar Biblioteca", "Pilotar", "Pistola", "Primeiros Socorros", "Psicanálise",
+    "Psicologia", "Pulo", "Punho/Soco", "Química", "Rastrear", "Reparo Elétrico", "Reparo Mecânico",
+    "Rifle", "Submetralhadora"
+]
+
+ATTRS = [
+    "Força", "Constituição", "Tamanho", "Inteligência", "Poder",
+    "Destreza", "Aparência", "Educação", "Sanidade",
+    "Ideia", "Sorte", "Saber"
+]
