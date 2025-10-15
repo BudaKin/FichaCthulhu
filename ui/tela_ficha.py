@@ -2,6 +2,7 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from core.data import SKILLS, ATTRS
 
+
 class TelaFicha(ttk.Frame):
     def __init__(self, parent, app):
         super().__init__(parent)
@@ -28,6 +29,9 @@ class TelaFicha(ttk.Frame):
         for i, name in enumerate(ATTRS):
             lbl = ttk.Label(attr_frame, text=name)
             lbl.grid(row=i//6, column=(i%6)*2, sticky="w", padx=4, pady=2)
+            # Quick Roll no nome do atributo
+            lbl.bind("<Double-Button-1>", lambda ev, n=name: app._perform_roll(n, "2d12", "0", None))
+
             v = app.attr_vars.setdefault(name, tk.StringVar())
             e = ttk.Entry(attr_frame, textvariable=v, width=8)
             e.grid(row=i//6, column=(i%6)*2+1, sticky="w", padx=4, pady=2)
@@ -47,7 +51,7 @@ class TelaFicha(ttk.Frame):
         lang_frame.pack(fill="x", padx=8, pady=6)
         app.lang_container = ttk.Frame(lang_frame)
         app.lang_container.pack(fill="x", padx=4, pady=4)
-        ttk.Button(lang_frame, text="+ Adicionar Perícia", bootstyle="info", command=app.add_language).pack(pady=2)
+        ttk.Button(lang_frame, text="+ Adicionar Perícia", bootstyle="info", command=lambda: self.add_language(app)).pack(pady=2)
 
         # Perícias
         skills_frame = ttk.Labelframe(self, text="Perícias (valores)")
@@ -64,6 +68,44 @@ class TelaFicha(ttk.Frame):
         for i, s in enumerate(SKILLS):
             row = i // 3
             col = (i % 3) * 2
-            ttk.Label(scrollable, text=s).grid(row=row, column=col, sticky="w", padx=4, pady=2)
+            lbl = ttk.Label(scrollable, text=s)
+            lbl.grid(row=row, column=col, sticky="w", padx=4, pady=2)
+            # Quick Roll no nome da perícia
+            lbl.bind("<Double-Button-1>", lambda ev, n=s: app._perform_roll(n, "2d12", "0", None))
+
             v = app.skill_vars.setdefault(s, tk.StringVar())
             ttk.Entry(scrollable, textvariable=v, width=8).grid(row=row, column=col+1, padx=4, pady=2)
+
+    # ===== Adicionar novas perícias (idiomas) com Quick Roll =====
+    def add_language(self, app):
+        linha = ttk.Frame(app.lang_container)
+        linha.pack(fill="x", padx=4, pady=2)
+
+        # Entry para o nome da perícia
+        nome_var = tk.StringVar()
+        nome_entry = ttk.Entry(linha, textvariable=nome_var, width=20)
+        nome_entry.pack(side="left", padx=4)
+
+        # Entry para o valor da perícia
+        val_var = tk.StringVar()
+        val_entry = ttk.Entry(linha, textvariable=val_var, width=8)
+        val_entry.pack(side="left", padx=4)
+
+        # Botão para remover a perícia
+        remove_btn = ttk.Button(linha, text="✖", bootstyle="danger", width=2,
+                                command=lambda: (linha.destroy(), app.extra_lang_vars.remove((nome_var, val_var, linha))))
+        remove_btn.pack(side="left", padx=4)
+
+        # Quick Roll: o valor digitado será usado como modificador
+        def quick_roll(ev):
+            nome = nome_var.get()
+            mod = val_var.get() or "0"
+            app._perform_roll(nome, "2d12", mod, None)
+
+        nome_entry.bind("<Double-Button-1>", quick_roll)
+        val_entry.bind("<Double-Button-1>", quick_roll)
+
+        app.extra_lang_vars.append((nome_var, val_var, linha))
+
+
+
