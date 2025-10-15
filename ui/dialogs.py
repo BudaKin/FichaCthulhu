@@ -47,8 +47,9 @@ def show_quick_roll_popup(parent, title, text):
         win.geometry(f"{w}x{h}+{x}+{y}")
         win.lift()
         win.focus_force()
+        # Grab seguro
+        win.grab_set()
 
     win.after(10, centralizar)
     win.transient(parent)
-    win.grab_set()
     win.wait_window()

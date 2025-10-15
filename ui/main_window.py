@@ -158,6 +158,7 @@ class PerditioGUI(ttk.Window):
         roll_win.geometry("420x520")
         roll_win.resizable(False, False)
 
+        # Centraliza
         roll_win.update_idletasks()
         x = (roll_win.winfo_screenwidth() // 2) - (420 // 2)
         y = (roll_win.winfo_screenheight() // 2) - (520 // 2)
@@ -166,25 +167,33 @@ class PerditioGUI(ttk.Window):
         frm = ttk.Frame(roll_win, padding=10)
         frm.pack(fill="both", expand=True)
 
+        # Perícia ou Atributo
         ttk.Label(frm, text="Perícia ou Atributo:").pack(pady=4)
-        entry = AutocompleteEntry(frm, list(self.skill_vars.keys()) + list(self.attr_vars.keys()))
+        
+        # Pega nomes das outras perícias adicionadas dinamicamente
+        dynamic_skills = [n_var.get() for n_var, _, _ in self.extra_lang_vars if n_var.get().strip()]
+
+        # Lista completa para autocomplete
+        all_names = list(self.skill_vars.keys()) + list(self.attr_vars.keys()) + dynamic_skills
+
+        entry = AutocompleteEntry(frm, all_names)
+
         entry.pack(pady=3)
 
-        ttk.Label(frm, text="Expressão de dados (ex: 2d12+):").pack(pady=4)
-        dice_var = tk.StringVar(value="2d12+")
+        # Expressão de dados
+        ttk.Label(frm, text="Expressão de dados (ex: 2d12):").pack(pady=4)
+        dice_var = tk.StringVar(value="2d12")
         ttk.Entry(frm, textvariable=dice_var, width=12).pack(pady=3)
 
-        ttk.Label(frm, text="Bônus adicional:").pack(pady=4)
-        bonus_var = tk.StringVar(value="0")
-        ttk.Entry(frm, textvariable=bonus_var, width=10).pack(pady=2)
-
+        # Botão de rolar
         ttk.Button(
             frm,
             text="Rolar!",
             bootstyle="success",
-            command=lambda: self._perform_roll(entry.get(), dice_var.get(), bonus_var.get(), output)
+            command=lambda: self._perform_roll(entry.get(), dice_var.get(), output, show_popup=False)
         ).pack(pady=6)
 
+        # Histórico
         ttk.Label(frm, text="Histórico").pack(pady=(10, 0))
         output = tk.Text(frm, height=14, wrap="word", state="normal")
         output.pack(fill="both", expand=True)
@@ -193,13 +202,14 @@ class PerditioGUI(ttk.Window):
 
         roll_win.grab_set()
 
-    def _perform_roll(self, nome, expr, bonus_str, output):
+    def _perform_roll(self, nome, expr, output=None, show_popup=True):
         from datetime import datetime
         nome = nome.strip()
         if not nome:
             messagebox.showwarning("Aviso", "Escolha uma perícia ou atributo primeiro.")
             return
 
+        # Pega apenas o valor da perícia ou atributo
         if nome in self.skill_vars:
             try:
                 mod = int(self.skill_vars[nome].get() or 0)
@@ -211,16 +221,20 @@ class PerditioGUI(ttk.Window):
             except:
                 mod = 0
         else:
-            mod = 0
-
-        try:
-            bonus = int(bonus_str)
-        except:
-            bonus = 0
+            # Outras perícias adicionadas dinamicamente
+            for n_var, v_var, _ in self.extra_lang_vars:
+                if n_var.get().strip() == nome:
+                    try:
+                        mod = int(v_var.get() or 0)
+                    except:
+                        mod = 0
+                    break
+            else:
+                mod = 0
 
         expr = expr.strip()
         if not expr or "d" not in expr:
-            expr = "2d12+"
+            expr = "2d12"
 
         try:
             val, details = eval_dice_expression(expr)
@@ -228,17 +242,23 @@ class PerditioGUI(ttk.Window):
             messagebox.showerror("Erro", f"Erro na expressão de dados: {e}")
             return
 
-        total = val + mod + bonus
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        line = f"[{timestamp}] {expr}{mod:+} (de {nome}) {bonus:+} => {total}\nDetalhes: {details}\n\n"
+        total = val + mod  # SOMENTE o modificador da perícia/atributo
 
+        # Mostra mod somente se diferente de 0
+        mod_str = f"+{mod}" if mod != 0 else ""
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        line = f"[{timestamp}] {expr}{mod_str} (de {nome}) => {total}\nDetalhes: {details}\n\n"
+
+        # Atualiza histórico
         self.roll_history.append(line)
         if output:
             output.configure(state="normal")
             output.insert("1.0", line)
             output.configure(state="disabled")
 
-        dialogs.show_quick_roll_popup(self, f"Rolagem: {nome}", line)
+        # Só mostra popup se for uma rolagem rápida (duplo clique)
+        if show_popup:
+            dialogs.show_quick_roll_popup(self, f"Rolagem: {nome}", line)
 
     # -------------------------- DADOS / LIMPEZA --------------------------
     def _apply_data(self, data):
