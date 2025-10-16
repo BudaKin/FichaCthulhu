@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Tkinter / GUI specific
+*.ico
+*.db
+*.sqlite3
+
+# User-specific files
+*.log
+*.tmp
+*.bak
+
+# Folders with saved fichas or user data
+fichas/
+*.json
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# PyInstaller / Executables
+*.exe
+*.spec
+
+# Coverage / Testing
+.coverage
+htmlcov/
+pytest_cache/
