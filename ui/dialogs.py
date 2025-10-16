@@ -1,23 +1,19 @@
 # ui/dialogs.py
 import tkinter as tk
-from tkinter import messagebox
 import sys
 import os
 
 def _get_base_path():
-    # retorna caminho base do pacote roda como exe (pyinstaller) ou como script
-    try:
-        if getattr(sys, 'frozen', False):
-            return sys._MEIPASS
-    except Exception:
-        pass
+    """Retorna o caminho absoluto do recurso, compatível com PyInstaller"""
+    if getattr(sys, 'frozen', False):
+        return sys._MEIPASS
     return os.path.dirname(os.path.abspath(__file__))
 
 def set_window_icon(win):
+    """Aplica o ícone ao window, compatível com PyInstaller"""
     try:
-        base_path = _get_base_path()
-        icon_path = os.path.join(base_path, "..", "assets", "cthulhu.ico")
-        icon_path = os.path.normpath(icon_path)
+        icon_path = os.path.join(_get_base_path(), "assets", "cthulhu.ico")
+        icon_path = os.path.abspath(icon_path)  # garante caminho absoluto
         if os.path.exists(icon_path):
             win.iconbitmap(icon_path)
     except Exception:
@@ -47,7 +43,6 @@ def show_quick_roll_popup(parent, title, text):
         win.geometry(f"{w}x{h}+{x}+{y}")
         win.lift()
         win.focus_force()
-        # Grab seguro
         win.grab_set()
 
     win.after(10, centralizar)

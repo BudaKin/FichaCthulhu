@@ -17,11 +17,20 @@ from ui.tela_info import TelaInfo
 from ui.tela_build import TelaBuild
 from ui.tela_rituais import TelaRituais
 
+def resource_path(relative_path):
+    """Retorna o caminho absoluto para recursos, compatível com PyInstaller"""
+    try:
+        base_path = sys._MEIPASS
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 
 class PerditioGUI(ttk.Window):
     def __init__(self):
         super().__init__(themename="vapor")
-        self.title("Perditio Character Sheet (Lixo's Enterprise)")
+        self.title("Ficha de personagem (Lixo's Enterprise)")
         self.geometry("1100x800")
         self.minsize(900, 600)
         self._set_icon()
@@ -55,16 +64,12 @@ class PerditioGUI(ttk.Window):
 
     def _set_icon(self):
         try:
-            if getattr(sys, 'frozen', False):
-                base_path = sys._MEIPASS
-            else:
-                base_path = os.path.dirname(os.path.abspath(__file__))
-            icon_path = os.path.join(base_path, "..", "assets", "cthulhu.ico")
-            icon_path = os.path.normpath(icon_path)
+            icon_path = resource_path("assets/cthulhu.ico")
             if os.path.exists(icon_path):
                 self.iconbitmap(icon_path)
         except Exception:
             pass
+
 
     def _centralize_window(self):
         self.update_idletasks()
@@ -151,6 +156,9 @@ class PerditioGUI(ttk.Window):
         roll_win.title("Rolador de Dados")
         roll_win.geometry("420x520")
         roll_win.resizable(False, False)
+
+        # Define ícone
+        dialogs.set_window_icon(roll_win)
 
         # Centraliza
         roll_win.update_idletasks()
