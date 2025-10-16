@@ -14,6 +14,7 @@ from core import storage
 
 from ui.tela_ficha import TelaFicha
 from ui.tela_info import TelaInfo
+from ui.tela_build import TelaBuild
 from ui.tela_rituais import TelaRituais
 
 
@@ -85,21 +86,22 @@ class PerditioGUI(ttk.Window):
         top_bar = ttk.Frame(self)
         top_bar.pack(fill="x", pady=4, padx=4)
 
-        ttk.Button(top_bar, text="Salvar (JSON)", command=self.save_json, bootstyle="success").pack(side="left", padx=4)
-        ttk.Button(top_bar, text="Carregar", command=self.load_json, bootstyle="info").pack(side="left", padx=4)
-        ttk.Button(top_bar, text="Exportar .txt", command=self.export_text, bootstyle="secondary").pack(side="left", padx=4)
-        ttk.Button(top_bar, text="Rolar Dados", command=self.open_roll_window, bootstyle="primary").pack(side="left", padx=4)
-        ttk.Button(top_bar, text="Limpar", command=self.clear_all, bootstyle="danger").pack(side="left", padx=4)
+        ttk.Button(top_bar, text="Salvar (JSON)", command=self.save_json, bootstyle="success").pack(side="right", padx=4)
+        ttk.Button(top_bar, text="Carregar", command=self.load_json, bootstyle="info").pack(side="right", padx=4)
+        ttk.Button(top_bar, text="Rolar Dados", command=self.open_roll_window, bootstyle="primary").pack(side="right", padx=4)
+        ttk.Button(top_bar, text="Limpar", command=self.clear_all, bootstyle="danger").pack(side="right", padx=4)
 
         notebook = ttk.Notebook(self, bootstyle="primary")
         notebook.pack(fill="both", expand=True, padx=10, pady=5)
 
         self.tela_ficha = TelaFicha(notebook, self)
+        self.tela_build = TelaBuild(notebook, self)
         self.tela_info = TelaInfo(notebook, self)
         self.tela_rituais = TelaRituais(notebook, self)
 
         notebook.add(self.tela_ficha, text="Ficha")
         notebook.add(self.tela_info, text="Info")
+        notebook.add(self.tela_build, text="Build")
         notebook.add(self.tela_rituais, text="Rituais")
 
         self.notebook = notebook
@@ -142,14 +144,6 @@ class PerditioGUI(ttk.Window):
         except Exception:
             pass
         messagebox.showinfo("Carregado", f"Ficha carregada:\n{fpath}")
-
-    def export_text(self):
-        data = self.gather_data()
-        fpath = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
-        if not fpath:
-            return
-        storage.export_text_to_path(data, fpath)
-        messagebox.showinfo("Exportado", f"Ficha exportada em:\n{fpath}")
 
     # -------------------------- ROLADOR --------------------------
     def open_roll_window(self):
