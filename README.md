@@ -41,4 +41,12 @@ Este projeto é um editor de fichas para RPG que utiliza um sistema baseado em C
 2. Preencha os dados do personagem nas abas.
 3. Use os botões para salvar, carregar, exportar ou rolar dados.
 
+## Instalação via pyinstaller
+
+comando para utilizar: pyinstaller --onefile --noconsole --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico;assets" main.py
+
+Obs: se for usar linux ou mac, trocar para: 
+
+pyinstaller --onefile --noconsole --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico:assets" main.py
+
 ---
