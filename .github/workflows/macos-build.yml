@@ -16,17 +16,21 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'  # ajuste se precisar
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller
-        # pip install -r requirements.txt  # descomente se tiver dependências
+        pip install pyinstaller Pillow
+        # pip install -r requirements.txt  # se tiver outras dependências
 
     - name: Build .app
       run: |
-        pyinstaller --onefile --noconsole --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico:assets" main.py
+        pyinstaller \
+          --windowed \
+          --icon=assets/cthulhu.icns \
+          --add-data "assets/cthulhu.icns:assets" \
+          main.py
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
