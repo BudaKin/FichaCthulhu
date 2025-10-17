@@ -90,7 +90,7 @@ class TelaFicha(ttk.Frame):
         canvas.bind_all("<Button-5>", lambda e: canvas.yview_scroll(1, "units"))
 
     # ===== Adicionar perícia extra =====
-    def add_language(self, app):
+    def add_language(self, app, nome = "", val = ""):
         """Adiciona uma nova perícia extra e reposiciona o botão."""
         scrollable = self.scrollable_skills
         per_row = 3
@@ -102,8 +102,8 @@ class TelaFicha(ttk.Frame):
         linha = ttk.Frame(scrollable)
         linha.grid(row=row, column=col, columnspan=2, padx=4, pady=2, sticky="w")
 
-        nome_var = tk.StringVar()
-        val_var = tk.StringVar()
+        nome_var = tk.StringVar(value=nome)
+        val_var = tk.StringVar(value=val)
 
         ttk.Entry(linha, textvariable=nome_var, width=20).pack(side="left", padx=4)
         ttk.Entry(linha, textvariable=val_var, width=8).pack(side="left", padx=4)

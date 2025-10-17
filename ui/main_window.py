@@ -54,8 +54,10 @@ class PerditioGUI(ttk.Window):
         self.habilidades_text = None
         self.equip_text = None
         self.vant_text = None
+        self.comp_text = None
         self.back_text = None
         self.rituals_text = None
+        self.rituals_text2 = None
         self.lang_container = None
 
         self.create_widgets()
@@ -125,8 +127,10 @@ class PerditioGUI(ttk.Window):
             "languages": langs,
             "habilidades": self.habilidades_text.get("1.0", "end").strip() if self.habilidades_text else "",
             "rituals": self.rituals_text.get("1.0", "end").strip() if self.rituals_text else "",
+            "rituals2": self.rituals_text2.get("1.0", "end").strip() if self.rituals_text2 else "",
             "equipment": self.equip_text.get("1.0", "end").strip() if self.equip_text else "",
             "advantages": self.vant_text.get("1.0", "end").strip() if self.vant_text else "",
+            "complications": self.comp_text.get("1.0", "end").strip() if self.comp_text else "",
             "backstory": self.back_text.get("1.0", "end").strip() if self.back_text else ""
         }
 
@@ -280,7 +284,7 @@ class PerditioGUI(ttk.Window):
                 child.destroy()
         self.extra_lang_vars.clear()
         for lang in data.get("languages", []):
-            self.add_language(lang.get("nome", ""), lang.get("valor", ""))
+            self.tela_ficha.add_language(self, lang.get("nome", ""), lang.get("valor", ""))
 
         def s(widget, value):
             if widget:
@@ -289,8 +293,10 @@ class PerditioGUI(ttk.Window):
 
         s(self.habilidades_text, data.get("habilidades", ""))
         s(self.rituals_text, data.get("rituals", ""))
+        s(self.rituals_text2, data.get("rituals2", ""))
         s(self.equip_text, data.get("equipment", ""))
         s(self.vant_text, data.get("advantages", ""))
+        s(self.comp_text, data.get("complications", ""))
         s(self.back_text, data.get("backstory", ""))
 
     def clear_all(self):
@@ -303,21 +309,21 @@ class PerditioGUI(ttk.Window):
         if self.lang_container:
             for c in self.lang_container.winfo_children(): c.destroy()
         self.extra_lang_vars.clear()
-        for t in [self.habilidades_text, self.rituals_text, self.equip_text, self.vant_text, self.back_text]:
+        for t in [self.habilidades_text, self.rituals_text, self.rituals_text2, self.equip_text, self.vant_text, self.comp_text, self.back_text]:
             if t:
                 t.delete("1.0", "end")
 
-    def add_language(self, nome="", valor=""):
-        if not self.lang_container:
-            return
-        frame = ttk.Frame(self.lang_container)
-        frame.pack(fill="x", pady=2)
-        name_var = tk.StringVar(value=nome)
-        val_var = tk.StringVar(value=valor)
-        e1 = ttk.Entry(frame, textvariable=name_var, width=25)
-        e1.pack(side="left", padx=3)
-        e2 = ttk.Entry(frame, textvariable=val_var, width=8)
-        e2.pack(side="left", padx=3)
-        btn = ttk.Button(frame, text="x", bootstyle="danger", command=frame.destroy, width=2)
-        btn.pack(side="left")
-        self.extra_lang_vars.append((name_var, val_var, frame))
+    # def add_language(self, nome="", valor=""):
+    #     if not self.lang_container:
+    #         return
+    #     frame = ttk.Frame(self.lang_container)
+    #     frame.pack(fill="x", pady=2)
+    #     name_var = tk.StringVar(value=nome)
+    #     val_var = tk.StringVar(value=valor)
+    #     e1 = ttk.Entry(frame, textvariable=name_var, width=25)
+    #     e1.pack(side="left", padx=3)
+    #     e2 = ttk.Entry(frame, textvariable=val_var, width=8)
+    #     e2.pack(side="left", padx=3)
+    #     btn = ttk.Button(frame, text="x", bootstyle="danger", command=frame.destroy, width=2)
+    #     btn.pack(side="left")
+    #     self.extra_lang_vars.append((name_var, val_var, frame))

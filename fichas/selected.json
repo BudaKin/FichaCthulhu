@@ -93,13 +93,23 @@
   },
   "languages": [
     {
-      "nome": "Lixar",
-      "valor": "999"
+      "nome": "po",
+      "valor": "12"
+    },
+    {
+      "nome": "tchau",
+      "valor": ""
+    },
+    {
+      "nome": "Rarei",
+      "valor": ""
     }
   ],
   "habilidades": "exemplo",
   "rituals": "exemplo",
+  "rituals2": "exemplo",
   "equipment": "exemplo",
   "advantages": "exemplo",
+  "complications": "Exemplo",
   "backstory": "exemplo"
 }
