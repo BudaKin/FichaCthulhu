@@ -8,20 +8,26 @@ on:
 jobs:
   build-macos:
     runs-on: macos-latest
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'  # Escolha sua versão
+        python-version: '3.11'  # ajuste se precisar
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller
-        # pip install -r requirements.txt  # se tiver dependências
+        # pip install -r requirements.txt  # descomente se tiver dependências
+
     - name: Build .app
       run: |
-        pyinstaller --onefile --windowed seu_arquivo.py
+        pyinstaller --onefile --noconsole --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico:assets" main.py
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
