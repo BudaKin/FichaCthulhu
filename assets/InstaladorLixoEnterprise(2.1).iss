@@ -2,32 +2,34 @@
 
 [Setup]
 AppName=LixoEnterprise Cthulhu
-AppVersion=2.1
-DefaultDirName={pf}\LixoEnterprise
+AppVersion=2.2
+DefaultDirName={commonpf}\LixoEnterprise
 DefaultGroupName=LixoEnterprise
 DisableProgramGroupPage=yes
 OutputDir=output
 OutputBaseFilename=LixoEnterpriseSetup
-Compression=lzma
-SolidCompression=yes
+Compression=zip
+SolidCompression=no
 PrivilegesRequired=admin
 
+; --- Arquivos ---
 [Files]
 ; Executável principal
 Source: "../dist/cthulhu.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 ; Fonte TrueType (instala no Windows\Fonts)
-Source: "MetalMania.ttf"; DestDir: "{fonts}"; FontInstall: "Metal Mania"; Flags: onlyifdoesntexist uninsneveruninstall
+Source: "MetalMania.ttf"; DestDir: "{commonfonts}"; FontInstall: "Metal Mania"; Flags: onlyifdoesntexist uninsneveruninstall
 
-; Arquivos de fichas (exemplo com selected.json)
-Source: "../fichas/selected.json"; DestDir: "{app}\fichas"; Flags: ignoreversion
+; Arquivos de fichas
+Source: "../fichas\*"; DestDir: "{app}\fichas"; Flags: ignoreversion recursesubdirs
 
+; --- Ícones ---
 [Icons]
 ; Atalho no Menu Iniciar
 Name: "{group}\Cthulhu"; Filename: "{app}\cthulhu.exe"; WorkingDir: "{app}"; IconFilename: "{app}\cthulhu.exe"
 ; Atalho na Área de Trabalho
 Name: "{commondesktop}\Cthulhu"; Filename: "{app}\cthulhu.exe"; WorkingDir: "{app}"; IconFilename: "{app}\cthulhu.exe"
 
+; --- Execução pós-instalação ---
 [Run]
-; Executa opcionalmente após instalação
 Filename: "{app}\cthulhu.exe"; Description: "Executar Cthulhu agora"; Flags: nowait postinstall skipifsilent
