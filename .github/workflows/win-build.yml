@@ -26,13 +26,13 @@ jobs:
 
     - name: Build EXE with PyInstaller
       run: |
-        pyinstaller --windowed --name cthulhu --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico;assets" main.py
+        pyinstaller --windowed --name cthulhu --icon=assets/cthulhu.ico --add-data "assets;assets" main.py
 
     - name: Prepare release folder
       run: |
         mkdir LixoEnterprise
-        xcopy dist\cthulhu.exe LixoEnterprise\ /I /Y
-        xcopy dist\assets LixoEnterprise\assets /E /I /Y
+        xcopy dist\cthulhu\cthulhu.exe LixoEnterprise\ /I /Y
+        xcopy dist\cthulhu\assets LixoEnterprise\assets /E /I /Y
 
     - name: Create ZIP
       run: |
@@ -48,7 +48,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: app-exe
-        path: dist/cthulhu.exe
+        path: dist/cthulhu\cthulhu.exe
 
     - name: Upload ZIP
       uses: actions/upload-artifact@v4
