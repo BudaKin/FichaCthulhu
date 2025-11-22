@@ -26,20 +26,23 @@ jobs:
 
     - name: Build EXE with PyInstaller (onefile)
       run: |
-        pyinstaller --onefile --windowed --name cthulhu --icon=assets/cthulhu.ico --add-data "assets;assets" main.py
+        pyinstaller --onefile --windowed --name cthulhu ^
+                    --icon=assets/cthulhu.ico ^
+                    --add-data "assets;assets" main.py
+      shell: cmd
 
     - name: Prepare release folder
       run: |
         mkdir LixoEnterprise
-        move "dist\cthulhu.exe" "LixoEnterprise\cthulhu.exe"
-        if (Test-Path "assets") {
-            xcopy "assets" "LixoEnterprise\assets" /E /I /Y
-        }
-      shell: powershell
+        move dist\cthulhu.exe LixoEnterprise\cthulhu.exe
+        if exist assets (
+            xcopy assets LixoEnterprise\assets /E /I /Y
+        )
+      shell: cmd
 
     - name: Create ZIP
       run: |
-        Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
+        powershell Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
       shell: powershell
 
     - name: Upload EXE
