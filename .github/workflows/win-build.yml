@@ -1,4 +1,4 @@
-name: Build Windows .exe
+name: Build Windows Release
 
 on:
   push:
@@ -22,9 +22,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller Pillow
-        # pip install -r requirements.txt  # se tiver
+        # pip install -r requirements.txt
 
-    - name: Build .exe
+    - name: Build EXE with PyInstaller
       run: |
         pyinstaller ^
           --windowed ^
@@ -32,8 +32,36 @@ jobs:
           --add-data "assets/cthulhu.ico;assets" ^
           main.py
 
-    - name: Upload artifact
+    - name: Prepare ZIP folder
+      run: |
+        mkdir release
+        xcopy dist\main release\ /E /I /Y
+
+    - name: Create ZIP
+      run: |
+        powershell Compress-Archive -Path release\* -DestinationPath release.zip
+
+    - name: Install NSIS
+      run: choco install nsis -y
+
+    - name: Build NSIS installer
+      run: |
+        "%ProgramFiles(x86)%\NSIS\makensis.exe" installer.nsi
+
+    - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
-        name: app-windows
+        name: app-exe
         path: dist/*.exe
+
+    - name: Upload ZIP
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-zip
+        path: release.zip
+
+    - name: Upload Installer (NSIS)
+      uses: actions/upload-artifact@v4
+      with:
+        name: installer
+        path: installer.exe
