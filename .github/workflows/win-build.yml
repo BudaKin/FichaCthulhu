@@ -47,7 +47,8 @@ jobs:
       shell: powershell
 
     - name: Build NSIS installer
-      run: makensis.exe installer.nsi
+      run: |
+        & "C:\Program Files (x86)\NSIS\makensis.exe" installer.nsi
       shell: powershell
 
     - name: Upload EXE
