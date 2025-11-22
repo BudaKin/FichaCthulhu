@@ -22,10 +22,10 @@ Section "Install"
   SetOutPath "$INSTDIR"
 
   ; Copia o executável
-  File "dist\cthulhu.exe"
+  File "dist\cthulhu\cthulhu.exe"
 
   ; Copia a pasta de assets
-  File /r "dist\assets\*.*"
+  File /r "dist\cthulhu\assets\*.*"
 
   ; Cria atalho no menu iniciar
   CreateShortCut "$SMPROGRAMS\LixoEnterprise\cthulhu.lnk" "$INSTDIR\cthulhu.exe"
