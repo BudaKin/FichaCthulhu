@@ -297,7 +297,31 @@ class PerditioGUI(ttk.Window):
         #  POPUP VISUAL (somente quando NÃO for expressão de dados)
         # ============================================================
         if show_popup and dice_type != "expr":
-            show_visual_dice_popup(self, f"Rolagem: {nome}", dice_values, resultado, dice_type)
+
+            # Normaliza para lookup
+            norm = resultado.strip().lower()
+
+            mapa = {
+                "extremo": "Extremo",
+                "bom": "Bom",
+                "normal": "Normal",
+                "ruim": "Ruim",
+                "péssimo": "Péssimo",
+                "pessimo": "Péssimo",
+                "desastre": "Desastre"
+            }
+
+            # 🔥 Nome FINAL padronizado (como você faz com dados)
+            resultado_final = mapa.get(norm, "Normal")
+
+            # Envia apenas o nome final
+            show_visual_dice_popup(
+                self,
+                f"Rolagem: {nome}",
+                dice_values,
+                resultado_final,
+                dice_type
+            )
 
 
 
@@ -347,18 +371,3 @@ class PerditioGUI(ttk.Window):
         for t in [self.habilidades_text, self.rituals_text, self.rituals_text2, self.equip_text, self.vant_text, self.comp_text, self.back_text]:
             if t:
                 t.delete("1.0", "end")
-
-    # def add_language(self, nome="", valor=""):
-    #     if not self.lang_container:
-    #         return
-    #     frame = ttk.Frame(self.lang_container)
-    #     frame.pack(fill="x", pady=2)
-    #     name_var = tk.StringVar(value=nome)
-    #     val_var = tk.StringVar(value=valor)
-    #     e1 = ttk.Entry(frame, textvariable=name_var, width=25)
-    #     e1.pack(side="left", padx=3)
-    #     e2 = ttk.Entry(frame, textvariable=val_var, width=8)
-    #     e2.pack(side="left", padx=3)
-    #     btn = ttk.Button(frame, text="x", bootstyle="danger", command=frame.destroy, width=2)
-    #     btn.pack(side="left")
-    #     self.extra_lang_vars.append((name_var, val_var, frame))
