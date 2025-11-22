@@ -1,8 +1,8 @@
 # ui/autocomplete.py
 import tkinter as tk
-import ttkbootstrap as ttk
+import ttkbootstrap as tb
 
-class AutocompleteEntry(ttk.Entry):
+class AutocompleteEntry(tb.Entry):
     def __init__(self, parent, autocomplete_list=None, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent

@@ -1,15 +1,15 @@
 # ui/tela_ficha.py
 import tkinter as tk
-import ttkbootstrap as ttk
+import ttkbootstrap as tb
 from core.data import SKILLS, ATTRS
 
-class TelaFicha(ttk.Frame):
+class TelaFicha(tb.Frame):
     def __init__(self, parent, app):
         super().__init__(parent)
         self.app = app
 
         # -------- Cabeçalho --------
-        header = ttk.Labelframe(self, text="Identificação")
+        header = tb.Labelframe(self, text="Identificação")
         header.pack(fill="x", padx=8, pady=6)
         labels = [
             ("Nome", "nome"), ("Arquétipo", "arquetipo"), ("NEX", "nex"),
@@ -19,37 +19,37 @@ class TelaFicha(ttk.Frame):
         for i, (lab, key) in enumerate(labels):
             r = i // 3
             c = (i % 3) * 2
-            ttk.Label(header, text=lab).grid(row=r, column=c, sticky="w", padx=4, pady=2)
+            tb.Label(header, text=lab).grid(row=r, column=c, sticky="w", padx=4, pady=2)
             v = app.header_vars.setdefault(key, tk.StringVar())
-            ttk.Entry(header, textvariable=v, width=22).grid(row=r, column=c+1, sticky="w", padx=4, pady=2)
+            tb.Entry(header, textvariable=v, width=22).grid(row=r, column=c+1, sticky="w", padx=4, pady=2)
 
         # -------- Atributos --------
-        attr_frame = ttk.Labelframe(self, text="Atributos")
+        attr_frame = tb.Labelframe(self, text="Atributos")
         attr_frame.pack(fill="x", padx=8, pady=6)
         for i, name in enumerate(ATTRS):
-            lbl = ttk.Label(attr_frame, text=name)
+            lbl = tb.Label(attr_frame, text=name)
             lbl.grid(row=i//6, column=(i%6)*2, sticky="w", padx=4, pady=2)
             lbl.bind("<Double-Button-1>", lambda ev, n=name: app._perform_roll(n, "", show_popup=True))
             v = app.attr_vars.setdefault(name, tk.StringVar())
-            ttk.Entry(attr_frame, textvariable=v, width=8).grid(row=i//6, column=(i%6)*2+1, sticky="w", padx=4, pady=2)
+            tb.Entry(attr_frame, textvariable=v, width=8).grid(row=i//6, column=(i%6)*2+1, sticky="w", padx=4, pady=2)
 
         # -------- Status --------
-        stats_frame = ttk.Labelframe(self, text="Status")
+        stats_frame = tb.Labelframe(self, text="Status")
         stats_frame.pack(fill="x", padx=8, pady=6)
-        ttk.Label(stats_frame, text="Vida").grid(row=0, column=0, padx=4, sticky="w")
-        ttk.Entry(stats_frame, textvariable=app.vida_var, width=10).grid(row=0, column=1, padx=4)
-        ttk.Label(stats_frame, text="Sanidade").grid(row=0, column=2, padx=4, sticky="w")
-        ttk.Entry(stats_frame, textvariable=app.san_var, width=10).grid(row=0, column=3, padx=4)
-        ttk.Label(stats_frame, text="Ocultismo").grid(row=0, column=4, padx=4, sticky="w")
-        ttk.Entry(stats_frame, textvariable=app.ocult_var, width=10).grid(row=0, column=5, padx=4)
+        tb.Label(stats_frame, text="Vida").grid(row=0, column=0, padx=4, sticky="w")
+        tb.Entry(stats_frame, textvariable=app.vida_var, width=10).grid(row=0, column=1, padx=4)
+        tb.Label(stats_frame, text="Sanidade").grid(row=0, column=2, padx=4, sticky="w")
+        tb.Entry(stats_frame, textvariable=app.san_var, width=10).grid(row=0, column=3, padx=4)
+        tb.Label(stats_frame, text="Ocultismo").grid(row=0, column=4, padx=4, sticky="w")
+        tb.Entry(stats_frame, textvariable=app.ocult_var, width=10).grid(row=0, column=5, padx=4)
 
         # -------- Perícias com Scroll --------
-        skills_frame = ttk.Labelframe(self, text="Perícias (valores)")
+        skills_frame = tb.Labelframe(self, text="Perícias (valores)")
         skills_frame.pack(fill="both", expand=True, padx=8, pady=6)
 
         canvas = tk.Canvas(skills_frame, highlightthickness=0)
-        scrollbar = ttk.Scrollbar(skills_frame, orient="vertical", command=canvas.yview, bootstyle="round")
-        scrollable = ttk.Frame(canvas)
+        scrollbar = tb.Scrollbar(skills_frame, orient="vertical", command=canvas.yview, bootstyle="round")
+        scrollable = tb.Frame(canvas)
 
         scrollable.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         canvas.create_window((0, 0), window=scrollable, anchor="nw")
@@ -59,7 +59,7 @@ class TelaFicha(ttk.Frame):
         scrollbar.pack(side="right", fill="y")
 
         # ---- Centralização das perícias ----
-        self.center_frame = ttk.Frame(scrollable)
+        self.center_frame = tb.Frame(scrollable)
         self.center_frame.pack(anchor="center", pady=8)
 
         self.scrollable_skills = self.center_frame
@@ -69,14 +69,14 @@ class TelaFicha(ttk.Frame):
         for i, s in enumerate(SKILLS):
             row = i // 3
             col = (i % 3) * 2
-            lbl = ttk.Label(self.center_frame, text=s)
+            lbl = tb.Label(self.center_frame, text=s)
             lbl.grid(row=row, column=col, sticky="w", padx=4, pady=2)
             lbl.bind("<Double-Button-1>", lambda ev, n=s: app._perform_roll(n, "", show_popup=True))
             v = app.skill_vars.setdefault(s, tk.StringVar())
-            ttk.Entry(self.center_frame, textvariable=v, width=8).grid(row=row, column=col+1, padx=4, pady=2)
+            tb.Entry(self.center_frame, textvariable=v, width=8).grid(row=row, column=col+1, padx=4, pady=2)
 
         # -------- Botão Adicionar Perícia --------
-        self.btn_add = ttk.Button(
+        self.btn_add = tb.Button(
             self.center_frame,
             text="+ Adicionar Perícia",
             bootstyle="info",
@@ -100,16 +100,16 @@ class TelaFicha(ttk.Frame):
         row = total // per_row
         col = (total % per_row) * 2
 
-        linha = ttk.Frame(scrollable)
+        linha = tb.Frame(scrollable)
         linha.grid(row=row, column=col, columnspan=2, padx=4, pady=2, sticky="w")
 
         nome_var = tk.StringVar(value=nome)
         val_var = tk.StringVar(value=val)
 
-        ttk.Entry(linha, textvariable=nome_var, width=20).pack(side="left", padx=4)
-        ttk.Entry(linha, textvariable=val_var, width=8).pack(side="left", padx=4)
+        tb.Entry(linha, textvariable=nome_var, width=20).pack(side="left", padx=4)
+        tb.Entry(linha, textvariable=val_var, width=8).pack(side="left", padx=4)
 
-        btn_remove = ttk.Button(linha, text="✖", bootstyle="danger", width=2,
+        btn_remove = tb.Button(linha, text="✖", bootstyle="danger", width=2,
                                 command=lambda l=linha: self.remover(app, l))
         btn_remove.pack(side="left", padx=2)
 

@@ -12,7 +12,7 @@ RESULT_COLORS = {
     "Bom": "#fffd6d",
     "Normal": "#ffffff",
     "Ruim": "#60c075",
-    "Péssimo": "#9d9d9d",
+    "Péssimo": "#815100",
     "Desastre": "#8481ff",
 }
 
@@ -76,7 +76,7 @@ def render_number_image(number, color, stroke=3, fontsize=72):
     try:
         draw.text((10, 10), str(number),
                   font=font, fill=color,
-                  stroke_width=stroke, stroke_fill="white")
+                  stroke_width=stroke)
     except:
         # fallback manual
         offsets = [(-1, -1), (-1, 0), (-1, 1),
@@ -157,7 +157,7 @@ def show_visual_dice_popup(parent, title, dice_values, result_name, dice_type):
         d2 = dice_values[1] if len(dice_values) > 1 else 0
 
         img1 = render_number_image(d1, "#b06cff", stroke=5, fontsize=90)
-        img2 = render_number_image(d2, "#000000", stroke=5, fontsize=90)
+        img2 = render_number_image(d2, "#9d9d9d", stroke=5, fontsize=90)
 
         l1 = tk.Label(frame, image=img1, bg="#222")
         l1.image = img1

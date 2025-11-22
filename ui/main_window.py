@@ -4,7 +4,7 @@ import sys
 import json
 import datetime
 import tkinter as tk
-import ttkbootstrap as ttk
+import ttkbootstrap as tb
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox
 from datetime import datetime
@@ -30,7 +30,7 @@ def resource_path(relative_path):
 
 
 
-class PerditioGUI(ttk.Window):
+class PerditioGUI(tb.Window):
     def __init__(self):
         super().__init__(themename="vapor")
         self.title("Ficha de personagem (Lixo's Enterprise)")
@@ -93,15 +93,15 @@ class PerditioGUI(ttk.Window):
             messagebox.showwarning("Aviso", f"Erro ao abrir selected.json:\n{e}")
 
     def create_widgets(self):
-        top_bar = ttk.Frame(self)
+        top_bar = tb.Frame(self)
         top_bar.pack(fill="x", pady=4, padx=4)
 
-        ttk.Button(top_bar, text="Salvar (JSON)", command=self.save_json, bootstyle="success").pack(side="right", padx=4)
-        ttk.Button(top_bar, text="Carregar", command=self.load_json, bootstyle="info").pack(side="right", padx=4)
-        ttk.Button(top_bar, text="Rolar Dados", command=self.open_roll_window, bootstyle="primary").pack(side="right", padx=4)
-        ttk.Button(top_bar, text="Limpar", command=self.clear_all, bootstyle="danger").pack(side="right", padx=4)
+        tb.Button(top_bar, text="Salvar (JSON)", command=self.save_json, bootstyle="success").pack(side="right", padx=4)
+        tb.Button(top_bar, text="Carregar", command=self.load_json, bootstyle="info").pack(side="right", padx=4)
+        tb.Button(top_bar, text="Rolar Dados", command=self.open_roll_window, bootstyle="primary").pack(side="right", padx=4)
+        tb.Button(top_bar, text="Limpar", command=self.clear_all, bootstyle="danger").pack(side="right", padx=4)
 
-        notebook = ttk.Notebook(self, bootstyle="primary")
+        notebook = tb.Notebook(self, bootstyle="primary")
         notebook.pack(fill="both", expand=True, padx=10, pady=5)
 
         self.tela_ficha = TelaFicha(notebook, self)
@@ -159,7 +159,7 @@ class PerditioGUI(ttk.Window):
 
     # -------------------------- ROLADOR --------------------------
     def open_roll_window(self):
-        roll_win = ttk.Toplevel(self)
+        roll_win = tb.Toplevel(self)
         roll_win.title("Rolador de Dados")
         roll_win.geometry("420x520")
         roll_win.resizable(False, False)
@@ -173,11 +173,11 @@ class PerditioGUI(ttk.Window):
         y = (roll_win.winfo_screenheight() // 2) - (520 // 2)
         roll_win.geometry(f"+{x}+{y}")
 
-        frm = ttk.Frame(roll_win, padding=10)
+        frm = tb.Frame(roll_win, padding=10)
         frm.pack(fill="both", expand=True)
 
         # Perícia ou Atributo
-        ttk.Label(frm, text="Perícia ou Atributo:").pack(pady=4)
+        tb.Label(frm, text="Perícia ou Atributo:").pack(pady=4)
         
         # Pega nomes das outras perícias adicionadas dinamicamente
         dynamic_skills = [n_var.get() for n_var, _, _ in self.extra_lang_vars if n_var.get().strip()]
@@ -190,12 +190,12 @@ class PerditioGUI(ttk.Window):
         entry.pack(pady=3)
 
         # Expressão de dados
-        ttk.Label(frm, text="Expressão de dados (ex: 2d12):").pack(pady=4)
+        tb.Label(frm, text="Expressão de dados (ex: 2d12):").pack(pady=4)
         dice_var = tk.StringVar(value="2d12")
-        ttk.Entry(frm, textvariable=dice_var, width=12).pack(pady=3)
+        tb.Entry(frm, textvariable=dice_var, width=12).pack(pady=3)
 
         # Botão de rolar
-        ttk.Button(
+        tb.Button(
             frm,
             text="Rolar!",
             bootstyle="success",
@@ -203,7 +203,7 @@ class PerditioGUI(ttk.Window):
         ).pack(pady=6)
 
         # Histórico
-        ttk.Label(frm, text="Histórico").pack(pady=(10, 0))
+        tb.Label(frm, text="Histórico").pack(pady=(10, 0))
         output = tk.Text(frm, height=14, wrap="word", state="normal")
         output.pack(fill="both", expand=True)
         output.insert("1.0", "".join(self.roll_history))
