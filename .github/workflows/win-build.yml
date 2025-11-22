@@ -31,19 +31,18 @@ jobs:
     - name: Prepare release folder
       run: |
         mkdir LixoEnterprise
-        xcopy dist\cthulhu.exe LixoEnterprise\ /E /I /Y
-        xcopy dist\* LixoEnterprise\ /E /I /Y
+        xcopy dist\cthulhu.exe LixoEnterprise\ /I /Y
+        xcopy dist\assets LixoEnterprise\assets /E /I /Y
 
     - name: Create ZIP
       run: |
-        powershell Compress-Archive -Path LixoEnterprise\* -DestinationPath LixoEnterprise.zip
+        powershell Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
 
     - name: Install NSIS
       run: choco install nsis -y
 
     - name: Build NSIS installer
-      run: |
-        & "$env:ProgramFiles(x86)\NSIS\makensis.exe" installer.nsi
+      run: makensis.exe installer.nsi
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
