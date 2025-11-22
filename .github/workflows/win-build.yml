@@ -26,35 +26,36 @@ jobs:
 
     - name: Build EXE with PyInstaller
       run: |
-        pyinstaller --windowed --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico;assets" main.py
+        pyinstaller --windowed --name cthulhu --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico;assets" main.py
 
-    - name: Prepare ZIP folder
+    - name: Prepare release folder
       run: |
-        mkdir release
-        xcopy dist\main release\ /E /I /Y
+        mkdir LixoEnterprise
+        xcopy dist\cthulhu.exe LixoEnterprise\ /E /I /Y
+        xcopy dist\* LixoEnterprise\ /E /I /Y
 
     - name: Create ZIP
       run: |
-        powershell Compress-Archive -Path release\* -DestinationPath release.zip
+        powershell Compress-Archive -Path LixoEnterprise\* -DestinationPath LixoEnterprise.zip
 
     - name: Install NSIS
       run: choco install nsis -y
 
     - name: Build NSIS installer
       run: |
-        "%ProgramFiles(x86)%\NSIS\makensis.exe" installer.nsi
+        & "$env:ProgramFiles(x86)\NSIS\makensis.exe" installer.nsi
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
         name: app-exe
-        path: dist/*.exe
+        path: dist/cthulhu.exe
 
     - name: Upload ZIP
       uses: actions/upload-artifact@v4
       with:
         name: app-zip
-        path: release.zip
+        path: LixoEnterprise.zip
 
     - name: Upload Installer (NSIS)
       uses: actions/upload-artifact@v4
