@@ -22,28 +22,34 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller Pillow ttkbootstrap
-        # pip install -r requirements.txt   # se houver mais dependências
 
-    - name: Build EXE with PyInstaller (onefile)
+    - name: Build EXE with PyInstaller
+      shell: powershell
       run: |
-        pyinstaller --onefile --windowed --name cthulhu ^
-                    --icon=assets/cthulhu.ico ^
-                    --add-data "assets;assets" main.py
-      shell: cmd
+        pyinstaller `
+          --onefile `
+          --windowed `
+          --hidden-import PIL._tkinter_finder `
+          --name cthulhu `
+          --icon=assets/cthulhu.ico `
+          --add-data "assets;assets" `
+          main.py
 
     - name: Prepare release folder
+      shell: powershell
       run: |
         mkdir LixoEnterprise
-        move dist\cthulhu.exe LixoEnterprise\cthulhu.exe
-        if exist assets (
-            xcopy assets LixoEnterprise\assets /E /I /Y
-        )
-      shell: cmd
+        Copy-Item dist\cthulhu.exe LixoEnterprise\cthulhu.exe
+
+        # Copia assets se precisar externamente
+        if (Test-Path assets) {
+          Copy-Item assets LixoEnterprise\assets -Recurse
+        }
 
     - name: Create ZIP
-      run: |
-        powershell Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
       shell: powershell
+      run: |
+        Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
