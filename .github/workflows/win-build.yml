@@ -24,16 +24,16 @@ jobs:
         pip install pyinstaller Pillow
         # pip install -r requirements.txt
 
-    - name: Build EXE with PyInstaller
+    - name: Build EXE with PyInstaller (onefile)
       run: |
-        pyinstaller --windowed --name cthulhu --icon=assets/cthulhu.ico --add-data "assets;assets" main.py
+        pyinstaller --onefile --windowed --name cthulhu --icon=assets/cthulhu.ico --add-data "assets;assets" main.py
 
     - name: Prepare release folder
       run: |
         mkdir LixoEnterprise
-        xcopy "dist\cthulhu\cthulhu.exe" "LixoEnterprise\" /I /Y
-        if (Test-Path "dist\cthulhu\assets") {
-            xcopy "dist\cthulhu\assets" "LixoEnterprise\assets" /E /I /Y
+        move "dist\cthulhu.exe" "LixoEnterprise\cthulhu.exe"
+        if (Test-Path "assets") {
+            xcopy "assets" "LixoEnterprise\assets" /E /I /Y
         }
       shell: powershell
 
@@ -42,29 +42,14 @@ jobs:
         Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
       shell: powershell
 
-    - name: Install NSIS
-      run: choco install nsis -y
-      shell: powershell
-
-    - name: Build NSIS installer
-      run: |
-        & "C:\Program Files (x86)\NSIS\makensis.exe" installer.nsi
-      shell: powershell
-
     - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
         name: app-exe
-        path: dist\cthulhu\cthulhu.exe
+        path: LixoEnterprise\cthulhu.exe
 
     - name: Upload ZIP
       uses: actions/upload-artifact@v4
       with:
         name: app-zip
         path: LixoEnterprise.zip
-
-    - name: Upload Installer (NSIS)
-      uses: actions/upload-artifact@v4
-      with:
-        name: installer
-        path: installer.exe
