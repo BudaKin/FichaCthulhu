@@ -1,3 +1,4 @@
+# ui/main_window.py
 import os
 import sys
 import json
@@ -6,10 +7,12 @@ import tkinter as tk
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox
+from datetime import datetime
 
 from ui.autocomplete import AutocompleteEntry
 from ui import dialogs
-from core.dice import eval_dice_expression
+from core.dice import eval_dice_expression, roll_stat_or_skill
+from ui.dialogs import show_visual_dice_popup
 from core import storage
 
 from ui.tela_ficha import TelaFicha
@@ -210,61 +213,93 @@ class PerditioGUI(ttk.Window):
 
     def _perform_roll(self, nome, expr, output=None, show_popup=True):
         from datetime import datetime
+
         nome = nome.strip()
-        if not nome:
-            messagebox.showwarning("Aviso", "Escolha uma perícia ou atributo primeiro.")
-            return
-
-        # Pega apenas o valor da perícia ou atributo
-        if nome in self.skill_vars:
-            try:
-                mod = int(self.skill_vars[nome].get() or 0)
-            except:
-                mod = 0
-        elif nome in self.attr_vars:
-            try:
-                mod = int(self.attr_vars[nome].get() or 0)
-            except:
-                mod = 0
-        else:
-            # Outras perícias adicionadas dinamicamente
-            for n_var, v_var, _ in self.extra_lang_vars:
-                if n_var.get().strip() == nome:
-                    try:
-                        mod = int(v_var.get() or 0)
-                    except:
-                        mod = 0
-                    break
-            else:
-                mod = 0
-
         expr = expr.strip()
-        if not expr or "d" not in expr:
-            expr = "2d12"
 
-        try:
-            val, details = eval_dice_expression(expr)
-        except Exception as e:
-            messagebox.showerror("Erro", f"Erro na expressão de dados: {e}")
-            return
+        # ============================================================
+        #  CASO 1 ― PRIORIDADE PARA EXPRESSÃO DE DADOS CUSTOMIZADA
+        #  Se expr != "" → usar somente eval_dice_expression
+        #  Atributo/perícia é IGNO…
+        # ============================================================
+        if expr:
+            try:
+                total, detalhes = eval_dice_expression(expr)
+            except Exception as e:
+                messagebox.showerror("Erro", f"Erro na expressão de dados:\n{e}")
+                return
 
-        total = val + mod  # SOMENTE o modificador da perícia/atributo
+            resultado = "Custom"
+            dice_type = "expr"
+            dice_values = []  # não há dados visuais aqui
 
-        # Mostra mod somente se diferente de 0
-        mod_str = f"+{mod}" if mod != 0 else ""
+        else:
+            # ============================================================
+            #  CASO 2 ― EXPRESSÃO VAZIA → usar sistema especial
+            # ============================================================
+            if not nome:
+                messagebox.showwarning(
+                    "Aviso",
+                    "Escolha uma perícia/atributo OU digite uma expressão de dados."
+                )
+                return
+
+            # ------------------------------------------------------------
+            #  Obter o valor numérico do atributo/perícia
+            # ------------------------------------------------------------
+            if nome in self.skill_vars:
+                try:
+                    mod = int(self.skill_vars[nome].get() or 0)
+                except:
+                    mod = 0
+
+            elif nome in self.attr_vars:
+                try:
+                    mod = int(self.attr_vars[nome].get() or 0)
+                except:
+                    mod = 0
+
+            else:
+                # Perícias extras
+                mod = 0
+                for n_var, v_var, _ in self.extra_lang_vars:
+                    if n_var.get().strip() == nome:
+                        try:
+                            mod = int(v_var.get() or 0)
+                        except:
+                            mod = 0
+                        break
+
+            # ------------------------------------------------------------
+            #  Rolar usando seu sistema especial (d100 ou 2d12)
+            # ------------------------------------------------------------
+            dice_values, total, resultado, detalhes, dice_type = roll_stat_or_skill(nome, mod)
+
+        # ============================================================
+        #  REGISTRAR NO HISTÓRICO
+        # ============================================================
         timestamp = datetime.now().strftime("%H:%M:%S")
-        line = f"[{timestamp}] {expr}{mod_str} (de {nome}) => {total}\nDetalhes: {details}\n\n"
+        line = (
+            f"[{timestamp}] Rolagem de {nome or expr} → {total}\n"
+            f"Tipo: {dice_type}\n"
+            f"Resultado: {resultado}\n"
+            f"Detalhes: {detalhes}\n\n"
+        )
 
-        # Atualiza histórico
         self.roll_history.append(line)
+
         if output:
             output.configure(state="normal")
             output.insert("1.0", line)
             output.configure(state="disabled")
 
-        # Só mostra popup se for uma rolagem rápida (duplo clique)
-        if show_popup:
-            dialogs.show_quick_roll_popup(self, f"Rolagem: {nome}", line)
+        # ============================================================
+        #  POPUP VISUAL (somente quando NÃO for expressão de dados)
+        # ============================================================
+        if show_popup and dice_type != "expr":
+            show_visual_dice_popup(self, f"Rolagem: {nome}", dice_values, resultado, dice_type)
+
+
 
     # -------------------------- DADOS / LIMPEZA --------------------------
     def _apply_data(self, data):

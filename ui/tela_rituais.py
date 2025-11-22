@@ -1,3 +1,4 @@
+# ui/tela_rituais.py
 import ttkbootstrap as ttk
 from ui.components import make_scrollable_text
 

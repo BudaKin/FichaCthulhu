@@ -1,3 +1,4 @@
+# ui/tela_ficha.py
 import tkinter as tk
 import ttkbootstrap as ttk
 from core.data import SKILLS, ATTRS
@@ -28,7 +29,7 @@ class TelaFicha(ttk.Frame):
         for i, name in enumerate(ATTRS):
             lbl = ttk.Label(attr_frame, text=name)
             lbl.grid(row=i//6, column=(i%6)*2, sticky="w", padx=4, pady=2)
-            lbl.bind("<Double-Button-1>", lambda ev, n=name: app._perform_roll(n, "2d12"))
+            lbl.bind("<Double-Button-1>", lambda ev, n=name: app._perform_roll(n, "", show_popup=True))
             v = app.attr_vars.setdefault(name, tk.StringVar())
             ttk.Entry(attr_frame, textvariable=v, width=8).grid(row=i//6, column=(i%6)*2+1, sticky="w", padx=4, pady=2)
 
@@ -70,7 +71,7 @@ class TelaFicha(ttk.Frame):
             col = (i % 3) * 2
             lbl = ttk.Label(self.center_frame, text=s)
             lbl.grid(row=row, column=col, sticky="w", padx=4, pady=2)
-            lbl.bind("<Double-Button-1>", lambda ev, n=s: app._perform_roll(n, "2d12"))
+            lbl.bind("<Double-Button-1>", lambda ev, n=s: app._perform_roll(n, "", show_popup=True))
             v = app.skill_vars.setdefault(s, tk.StringVar())
             ttk.Entry(self.center_frame, textvariable=v, width=8).grid(row=row, column=col+1, padx=4, pady=2)
 
@@ -112,11 +113,13 @@ class TelaFicha(ttk.Frame):
                                 command=lambda l=linha: self.remover(app, l))
         btn_remove.pack(side="left", padx=2)
 
-        def quick_roll(ev):
-            nome = nome_var.get()
-            app._perform_roll(nome, "2d12")
-        linha.winfo_children()[0].bind("<Double-Button-1>", quick_roll)
-        linha.winfo_children()[1].bind("<Double-Button-1>", quick_roll)
+        def make_extra_roll(n_var):
+            return lambda ev: app._perform_roll(n_var.get(), "", show_popup=True)
+
+        linha.winfo_children()[0].bind("<Double-Button-1>", make_extra_roll(nome_var))
+        linha.winfo_children()[1].bind("<Double-Button-1>", make_extra_roll(nome_var))
+
+
 
         app.extra_lang_vars.append((nome_var, val_var, linha))
         self._reorganizar_extras(app)

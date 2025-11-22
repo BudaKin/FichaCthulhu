@@ -3,37 +3,111 @@ import tkinter as tk
 import sys
 import os
 
+
 def _get_base_path():
     """Retorna o caminho absoluto do recurso, compatível com PyInstaller"""
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
     return os.path.dirname(os.path.abspath(__file__))
 
+
 def set_window_icon(win):
     """Aplica o ícone ao window, compatível com PyInstaller"""
     try:
         icon_path = os.path.join(_get_base_path(), "assets", "cthulhu.ico")
-        icon_path = os.path.abspath(icon_path)  # garante caminho absoluto
+        icon_path = os.path.abspath(icon_path)
         if os.path.exists(icon_path):
             win.iconbitmap(icon_path)
     except Exception:
         pass
 
-def show_quick_roll_popup(parent, title, text):
+
+# =======================================================
+#   NOVO POPUP VISUAL PARA ROLAGEM
+# =======================================================
+def show_visual_dice_popup(parent, title, dice_values, result_name, dice_type):
+    """
+    dice_values:
+        d100 → [valor]
+        2d12 → [d1, d2]
+    result_name:
+        "Bom", "Ruim", "Extremo", etc.
+    dice_type:
+        "d100" ou "2d12"
+    """
     win = tk.Toplevel(parent)
     win.title(title)
     set_window_icon(win)
     win.resizable(False, False)
 
-    frame = tk.Frame(win, padx=10, pady=10)
-    frame.pack(fill="both", expand=True)
+    frame = tk.Frame(win, padx=20, pady=20, bg="#222")
+    frame.pack()
 
-    lbl = tk.Label(frame, text=text, justify="left", wraplength=400)
-    lbl.pack(padx=5, pady=5)
+    # ================================
+    #   DADO d100 (1 número roxo)
+    # ================================
+    if dice_type == "d100":
+        val = dice_values[0]
+        lbl = tk.Label(
+            frame,
+            text=str(val),
+            fg="#b06cff",      # Roxo
+            bg="#222",
+            font=("Metal Mania", 48),
+            bd=3,
+            relief="solid"
+        )
+        lbl.pack(pady=10)
 
-    btn = tk.Button(frame, text="OK", command=win.destroy)
-    btn.pack(pady=(5,0))
+    # ================================
+    #   DADOS 2d12 (roxo + preto)
+    # ================================
+    else:
+        d1, d2 = dice_values
 
+        lbl1 = tk.Label(
+            frame,
+            text=str(d1),
+            fg="#b06cff",   # Roxo
+            bg="#222",
+            font=("Metal Mania", 42),
+            bd=3,
+            relief="solid"
+        )
+        lbl1.pack(side="left", padx=12)
+
+        lbl2 = tk.Label(
+            frame,
+            text=str(d2),
+            fg="black",
+            bg="#222",
+            font=("Metal Mania", 42),
+            bd=3,
+            relief="solid"
+        )
+        lbl2.pack(side="left", padx=12)
+
+    # ================================
+    #   RESULTADO (texto)
+    # ================================
+    lblr = tk.Label(
+        frame,
+        text=result_name,
+        fg="white",
+        bg="#222",
+        font=("Metal Mania", 26)
+    )
+    lblr.pack(pady=(20, 5))
+
+    # Botão ok
+    tk.Button(
+        frame,
+        text="OK",
+        command=win.destroy,
+        font=("Metal Mania", 16)
+    ).pack(pady=10)
+
+    # Centralizar janela
     def centralizar():
         win.update_idletasks()
         w = win.winfo_width()
