@@ -1,0 +1,39 @@
+name: Build Windows .exe
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller Pillow
+        # pip install -r requirements.txt  # se tiver
+
+    - name: Build .exe
+      run: |
+        pyinstaller ^
+          --windowed ^
+          --icon=assets/cthulhu.ico ^
+          --add-data "assets/cthulhu.ico;assets" ^
+          main.py
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-windows
+        path: dist/*.exe
