@@ -1,7 +1,3 @@
-;--------------------------------
-; NSIS Installer para cthulhu.exe
-;--------------------------------
-
 OutFile "installer.exe"
 InstallDir "$PROGRAMFILES\LixoEnterprise"
 RequestExecutionLevel admin
@@ -15,8 +11,8 @@ Section "Install"
   ; Copia o executável
   File "dist\cthulhu\cthulhu.exe"
 
-  ; Copia a pasta de assets se existir
-  IfFileExists "dist\cthulhu\assets\*.*" 0 +2
+  ; Copia a pasta de assets se existir arquivos
+  IfFileExists "dist\cthulhu\assets\*.*" +2 0
     File /r "dist\cthulhu\assets\*.*"
 
   ; Cria atalho no menu iniciar
