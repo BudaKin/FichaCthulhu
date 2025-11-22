@@ -26,11 +26,7 @@ jobs:
 
     - name: Build EXE with PyInstaller
       run: |
-        pyinstaller ^
-          --windowed ^
-          --icon=assets/cthulhu.ico ^
-          --add-data "assets/cthulhu.ico;assets" ^
-          main.py
+        pyinstaller --windowed --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico;assets" main.py
 
     - name: Prepare ZIP folder
       run: |
