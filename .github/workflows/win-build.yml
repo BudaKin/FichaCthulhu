@@ -31,24 +31,30 @@ jobs:
     - name: Prepare release folder
       run: |
         mkdir LixoEnterprise
-        xcopy dist\cthulhu\cthulhu.exe LixoEnterprise\ /I /Y
-        if exist dist\cthulhu\assets xcopy dist\cthulhu\assets LixoEnterprise\assets /E /I /Y
+        xcopy "dist\cthulhu\cthulhu.exe" "LixoEnterprise\" /I /Y
+        if (Test-Path "dist\cthulhu\assets") {
+            xcopy "dist\cthulhu\assets" "LixoEnterprise\assets" /E /I /Y
+        }
+      shell: powershell
 
     - name: Create ZIP
       run: |
-        powershell Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
+        Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
+      shell: powershell
 
     - name: Install NSIS
       run: choco install nsis -y
+      shell: powershell
 
     - name: Build NSIS installer
       run: makensis.exe installer.nsi
+      shell: powershell
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
       with:
         name: app-exe
-        path: dist/cthulhu\cthulhu.exe
+        path: dist\cthulhu\cthulhu.exe
 
     - name: Upload ZIP
       uses: actions/upload-artifact@v4
