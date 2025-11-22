@@ -11,9 +11,8 @@ Section "Install"
   ; Copia o executável
   File "dist\cthulhu\cthulhu.exe"
 
-  ; Copia a pasta de assets se existir arquivos
-  IfFileExists "dist\cthulhu\assets\*.*" +2 0
-    File /r "dist\cthulhu\assets\*.*"
+  ; Copia a pasta de assets (ignora erro se vazia ou inexistente)
+  File /r /nonfatal "dist\cthulhu\assets\*.*"
 
   ; Cria atalho no menu iniciar
   CreateShortCut "$SMPROGRAMS\LixoEnterprise\cthulhu.lnk" "$INSTDIR\cthulhu.exe"
