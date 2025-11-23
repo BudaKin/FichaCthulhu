@@ -101,14 +101,7 @@ def render_number_image(number, color, stroke=3, fontsize=72):
 # ======================================================
 #   Renderizar RESULTADO (sem stroke, sem fundo)
 # ======================================================
-def render_result_banner(text, color, fontsize=52):
-
-    if sys.platform.startswith("win"):
-        scale = 1.6
-    else:
-        scale = 1.0
-
-    fontsize = int(fontsize * scale)
+def render_result_banner(text, color, fontsize=72):
     font = _load_font(fontsize)
 
     try:
