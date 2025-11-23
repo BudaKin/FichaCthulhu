@@ -12,10 +12,9 @@ RESULT_COLORS = {
     "Bom": "#fffd6d",
     "Normal": "#ffffff",
     "Ruim": "#60c075",
-    "Péssimo": "#815100",
+    "Péssimo": "#9d9d9d",
     "Desastre": "#8481ff",
 }
-
 
 # ======================================================
 #   Caminho para assets (compatível com PyInstaller)
@@ -24,7 +23,6 @@ def _get_base_path():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
     return os.path.dirname(os.path.abspath(__file__))
-
 
 # ======================================================
 #   Aplicar Ícone
@@ -37,9 +35,8 @@ def set_window_icon(win):
     except:
         pass
 
-
 # ======================================================
-#   Função para carregar fonte com fallback universal
+#   Fonte com fallback
 # ======================================================
 def _load_font(fontsize):
     font_path = os.path.join(_get_base_path(), "assets", "MetalMania-Regular.ttf")
@@ -49,24 +46,31 @@ def _load_font(fontsize):
             return ImageFont.truetype(font_path, fontsize)
         except:
             return ImageFont.load_default()
-    else:
-        try:
-            return ImageFont.truetype("DejaVuSans.ttf", fontsize)
-        except:
-            return ImageFont.load_default()
 
+    try:
+        return ImageFont.truetype("DejaVuSans.ttf", fontsize)
+    except:
+        return ImageFont.load_default()
 
 # ======================================================
-#   Renderização de Número com Stroke
+#   Renderização do número com stroke e tamanho corrigido
 # ======================================================
 def render_number_image(number, color, stroke=3, fontsize=72):
-    font = _load_font(fontsize)
 
-    # Corrige tamanho no Windows (aumenta ~40%)
-    scale = 1.4 if sys.platform == "win32" else 1.0
+    # Ajuste REAL por plataforma
+    if sys.platform.startswith("win"):
+        scale = 2.2      # Windows precisa aumentar bastante
+    elif sys.platform.startswith("linux"):
+        scale = 1.0      # Linux já renderiza maior
+    else:
+        scale = 1.4
+
     fontsize = int(fontsize * scale)
     stroke = int(stroke * scale)
 
+    font = _load_font(fontsize)
+
+    # Calcula tamanho
     try:
         bbox = font.getbbox(str(number), stroke_width=stroke)
         w = bbox[2] - bbox[0]
@@ -74,35 +78,39 @@ def render_number_image(number, color, stroke=3, fontsize=72):
     except:
         w, h = font.getsize(str(number))
 
-    img = Image.new("RGBA", (w + 20, h + 20), (0, 0, 0, 0))
+    img = Image.new("RGBA", (w + 30, h + 30), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    # stroke real
+    # Stroke real da PIL
     try:
-        draw.text((10, 10), str(number),
-                  font=font, fill=color,
-                  stroke_width=stroke)
+        draw.text(
+            (15, 15),
+            str(number),
+            font=font,
+            fill=color,
+            stroke_width=stroke,
+            stroke_fill="white"
+        )
     except:
         # fallback manual
-        offsets = [(-1, -1), (-1, 0), (-1, 1),
-                   (0, -1), (0, 1),
-                   (1, -1), (1, 0), (1, 1)]
+        offsets = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         for ox, oy in offsets:
-            draw.text((10 + ox, 10 + oy), str(number),
-                      font=font, fill="white")
-        draw.text((10, 10), str(number),
-                  font=font, fill=color)
+            draw.text((15 + ox, 15 + oy), str(number), font=font, fill="white")
+        draw.text((15, 15), str(number), font=font, fill=color)
 
     return ImageTk.PhotoImage(img)
 
-
 # ======================================================
-#   Renderização do Resultado como Imagem TRANSPARENTE
+#   Banner do resultado — fundo transparente
 # ======================================================
 def render_result_banner(text, color, fontsize=52):
-    """
-    Texto sem borda, fundo totalmente transparente.
-    """
+
+    if sys.platform.startswith("win"):
+        scale = 1.6
+    else:
+        scale = 1.0
+
+    fontsize = int(fontsize * scale)
 
     font = _load_font(fontsize)
 
@@ -113,26 +121,16 @@ def render_result_banner(text, color, fontsize=52):
     except:
         w, h = font.getsize(text)
 
-    padding = 20
-    W = w + padding
-    H = h + padding
-
-    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    pad = 20
+    img = Image.new("RGBA", (w + pad, h + pad), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    # Texto puro, sem stroke
-    draw.text(
-        (padding // 2, padding // 2),
-        text,
-        font=font,
-        fill=color
-    )
+    draw.text((pad // 2, pad // 2), text, font=font, fill=color)
 
     return ImageTk.PhotoImage(img)
 
-
 # ======================================================
-#   Popup Visual Final
+#   Popup Visual
 # ======================================================
 def show_visual_dice_popup(parent, title, dice_values, result_name, dice_type):
 
@@ -144,54 +142,55 @@ def show_visual_dice_popup(parent, title, dice_values, result_name, dice_type):
     frame = tk.Frame(win, padx=20, pady=20, bg="#222")
     frame.pack()
 
-    # -----------------------
-    #   d100 → vermelho sangue
-    # -----------------------
+    # ======================
+    #   d100 = vermelho sangue
+    # ======================
     if dice_type == "d100":
         val = dice_values[0] if dice_values else 0
-        img = render_number_image(val, "#b30000", stroke=5, fontsize=110)
+        img = render_number_image(val, "#b30000", stroke=4, fontsize=120)
         lbl = tk.Label(frame, image=img, bg="#222")
         lbl.image = img
         lbl.pack(pady=10)
 
-    # -----------------------
-    # 2d12 → roxo + preto
-    # -----------------------
+    # ======================
+    #   2d12 = roxo + cinza
+    # ======================
     if dice_type == "2d12":
         d1 = dice_values[0] if dice_values else 0
         d2 = dice_values[1] if len(dice_values) > 1 else 0
 
-        img1 = render_number_image(d1, "#b06cff", stroke=5, fontsize=90)
-        img2 = render_number_image(d2, "#9d9d9d", stroke=5, fontsize=90)
+        img1 = render_number_image(d1, "#b06cff", stroke=4, fontsize=100)
+        img2 = render_number_image(d2, "#9d9d9d", stroke=4, fontsize=100)
 
         l1 = tk.Label(frame, image=img1, bg="#222")
-        l1.image = img1
-        l1.pack(side="left", padx=12)
-
         l2 = tk.Label(frame, image=img2, bg="#222")
-        l2.image = img2
-        l2.pack(side="left", padx=12)
 
-    # -----------------------
-    # Resultado como BANNER TRANSPARENTE
-    # -----------------------
+        l1.image = img1
+        l2.image = img2
+
+        l1.pack(side="left", padx=18)
+        l2.pack(side="left", padx=18)
+
+    # ======================
+    #   Banner do resultado
+    # ======================
     normalized = result_name.strip().title()
     color = RESULT_COLORS.get(normalized, "#ffffff")
 
     banner = render_result_banner(normalized, color)
     lbl_banner = tk.Label(frame, image=banner, bg="#222")
     lbl_banner.image = banner
-    lbl_banner.pack(pady=25)
+    lbl_banner.pack(pady=22)
 
-    # -----------------------
-    # Botão fechar
-    # -----------------------
+    # ======================
+    #   Botão OK
+    # ======================
     tk.Button(frame, text="OK", command=win.destroy,
-              font=("Metal Mania", 18)).pack(pady=10)
+              font=("Metal Mania", 20)).pack(pady=5)
 
-    # -----------------------
-    # Centralização
-    # -----------------------
+    # ======================
+    #   Centralização
+    # ======================
     def center():
         win.update_idletasks()
         w, h = win.winfo_width(), win.winfo_height()
