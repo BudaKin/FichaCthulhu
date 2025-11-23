@@ -11,7 +11,7 @@ RESULT_COLORS = {
     "Bom":     "#fffd6d",
     "Normal":  "#ffffff",
     "Ruim":    "#60c075",
-    "Péssimo": "#9d9d9d",
+    "Péssimo": "#815100",
     "Desastre":"#8481ff",
 }
 
