@@ -9,6 +9,20 @@ from ttkbootstrap.constants import *
 from tkinter import filedialog, messagebox
 from datetime import datetime
 
+# ================================================================
+# CORREÇÃO DE DPI PARA WINDOWS — impede que imagens fiquem pequenas
+# ================================================================
+if sys.platform == "win32":
+    try:
+        from ctypes import windll
+        windll.shcore.SetProcessDpiAwareness(1)  # DPI por monitor
+    except:
+        try:
+            windll.user32.SetProcessDPIAware()
+        except:
+            pass
+# ================================================================
+
 from ui.autocomplete import AutocompleteEntry
 from ui import dialogs
 from core.dice import eval_dice_expression, roll_stat_or_skill

@@ -26,7 +26,7 @@ def roll_d100_check(valor):
         resultado = "Péssimo"
     elif r > valor:
         resultado = "Ruim"
-    elif r < max(1, valor // 4):
+    elif r == 1 or r < max(1, valor // 4):
         resultado = "Extremo"
     elif r <= valor // 2:
         resultado = "Bom"
