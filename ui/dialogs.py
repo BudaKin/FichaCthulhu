@@ -64,8 +64,8 @@ def _load_font(fontsize):
 # ======================================================
 def render_number_image(number, color, stroke=3, fontsize=72):
 
-    fontsize = int(fontsize * scale)
-    stroke   = int(stroke * scale)
+    fontsize = int(fontsize)
+    stroke   = int(stroke)
 
     font = _load_font(fontsize)
 
