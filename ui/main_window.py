@@ -52,7 +52,7 @@ class PerditioGUI(tb.Window):
         self.minsize(900, 600)
         self._set_icon()
 
-        self.default_font = ("MetalMania", 11)
+        self.default_font = ("Metal Mania", 11)
         self.option_add("*Font", self.default_font)
         
         self.fichas_dir = os.path.join(os.getcwd(), "fichas")
