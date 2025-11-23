@@ -51,10 +51,20 @@ class PerditioGUI(tb.Window):
         self.geometry("1100x800")
         self.minsize(900, 600)
         self._set_icon()
-
-        self.default_font = ("Metal Mania", 11)
+    
+        # =============================================
+        # Registrar fonte TTF para o Tkinter
+        # =============================================
+        try:
+            font_path = os.path.join(os.path.dirname(__file__), "assets", "MetalMania-Regular.ttf")
+            tkfont.Font(root=self, name="MetalMania", file=font_path)
+        except:
+            pass
+    
+        # Agora sua UI inteira usa a MetalMania correta
+        self.default_font = ("MetalMania", 11)
         self.option_add("*Font", self.default_font)
-
+        
         self.fichas_dir = os.path.join(os.getcwd(), "fichas")
         os.makedirs(self.fichas_dir, exist_ok=True)
         self.selected_path = os.path.join(self.fichas_dir, "selected.json")
