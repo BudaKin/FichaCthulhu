@@ -62,6 +62,11 @@ def _load_font(fontsize):
 def render_number_image(number, color, stroke=3, fontsize=72):
     font = _load_font(fontsize)
 
+    # Corrige tamanho no Windows (aumenta ~40%)
+    scale = 1.4 if sys.platform == "win32" else 1.0
+    fontsize = int(fontsize * scale)
+    stroke = int(stroke * scale)
+
     try:
         bbox = font.getbbox(str(number), stroke_width=stroke)
         w = bbox[2] - bbox[0]
