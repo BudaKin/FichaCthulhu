@@ -1,4 +1,3 @@
-# ui/dialogs.py
 import tkinter as tk
 import sys
 import os
@@ -9,24 +8,25 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 # ======================================================
 RESULT_COLORS = {
     "Extremo": "#e025b7",
-    "Bom": "#fffd6d",
-    "Normal": "#ffffff",
-    "Ruim": "#60c075",
+    "Bom":     "#fffd6d",
+    "Normal":  "#ffffff",
+    "Ruim":    "#60c075",
     "Péssimo": "#9d9d9d",
-    "Desastre": "#8481ff",
+    "Desastre":"#8481ff",
 }
+
 
 # ======================================================
 #   Base path (PyInstaller compatível)
 # ======================================================
 def _get_base_path():
-    if getattr(sys, "frozen", False):
+    if getattr(sys, "frozen", False):  # rodando como exe
         return sys._MEIPASS
     return os.path.dirname(os.path.abspath(__file__))
 
 
 # ======================================================
-#   Ícone da Janela
+#   Ícone
 # ======================================================
 def set_window_icon(win):
     try:
@@ -38,41 +38,46 @@ def set_window_icon(win):
 
 
 # ======================================================
-#   Carregamento da Fonte — sempre do assets
+#   Fonte — SEMPRE carregada do assets
 # ======================================================
 def _load_font(fontsize):
     """
-    Sempre carrega MetalMania-Regular.ttf da pasta assets.
-    Nunca usa fontes do sistema.
+    Sempre usa MetalMania-Regular.ttf da pasta /assets no diretório raiz.
     """
-    font_path = os.path.join(_get_base_path(), "assets", "MetalMania-Regular.ttf")
+    base = _get_base_path()
+
+    # sobe um nível se estiver em ui/
+    # quando rodando via PyInstaller, o _MEIPASS já contém assets
+    if "ui" in os.path.basename(base).lower():
+        base = os.path.dirname(base)  # sobe 1 nível
+
+    font_path = os.path.join(base, "assets", "MetalMania-Regular.ttf")
 
     try:
         return ImageFont.truetype(font_path, fontsize)
-    except:
-        # fallback raro
+    except Exception as e:
+        print("Erro carregando fonte:", e)
         return ImageFont.load_default()
 
-
 # ======================================================
-#   Renderização do número do dado
+#   Renderizar NÚMERO DO DADO (com contorno branco)
 # ======================================================
 def render_number_image(number, color, stroke=3, fontsize=72):
 
-    # Ajuste real de escala por plataforma
+    # Escala dependendo do sistema
     if sys.platform.startswith("win"):
-        scale = 2.4      # Windows precisa maior
+        scale = 2.4
     elif sys.platform.startswith("linux"):
-        scale = 1.0
+        scale = 1.2
     else:
-        scale = 1.5
+        scale = 1.4
 
     fontsize = int(fontsize * scale)
-    stroke = int(stroke * scale)
+    stroke   = int(stroke * scale)
 
     font = _load_font(fontsize)
 
-    # Calcula bounding-box
+    # Tamanho do texto
     try:
         bbox = font.getbbox(str(number), stroke_width=stroke)
         w = bbox[2] - bbox[0]
@@ -83,21 +88,18 @@ def render_number_image(number, color, stroke=3, fontsize=72):
     img = Image.new("RGBA", (w + 40, h + 40), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    # Stroke correto (com borda branca)
     draw.text(
         (20, 20),
         str(number),
         font=font,
-        fill=color,
-        stroke_width=stroke,
-        stroke_fill="white"
+        fill=color
     )
 
     return ImageTk.PhotoImage(img)
 
 
 # ======================================================
-#   Renderização do banner do resultado
+#   Renderizar RESULTADO (sem stroke, sem fundo)
 # ======================================================
 def render_result_banner(text, color, fontsize=52):
 
@@ -121,7 +123,7 @@ def render_result_banner(text, color, fontsize=52):
     draw = ImageDraw.Draw(img)
 
     draw.text(
-        (pad // 2, pad // 2),
+        (pad//2, pad//2),
         text,
         font=font,
         fill=color
@@ -131,7 +133,7 @@ def render_result_banner(text, color, fontsize=52):
 
 
 # ======================================================
-#   Popup visual final
+#   POPUP VISUAL
 # ======================================================
 def show_visual_dice_popup(parent, title, dice_values, result_name, dice_type):
 
@@ -143,49 +145,56 @@ def show_visual_dice_popup(parent, title, dice_values, result_name, dice_type):
     frame = tk.Frame(win, padx=20, pady=20, bg="#222")
     frame.pack()
 
-    # ========== d100 (vermelho sangue) ==========
+    # ---------- D100 ----------
     if dice_type == "d100":
-        val = dice_values[0] if dice_values else 0
-        img = render_number_image(val, "#b30000", stroke=4, fontsize=120)
+        value = dice_values[0] if dice_values else 0
+        img = render_number_image(value, "#b30000", stroke=5, fontsize=120)
         lbl = tk.Label(frame, image=img, bg="#222")
         lbl.image = img
         lbl.pack(pady=15)
 
-    # ========== 2d12 (roxo + cinza) ==========
+    # ---------- 2D12 ----------
     if dice_type == "2d12":
         d1 = dice_values[0] if dice_values else 0
         d2 = dice_values[1] if len(dice_values) > 1 else 0
 
-        img1 = render_number_image(d1, "#b06cff", stroke=4, fontsize=100)
-        img2 = render_number_image(d2, "#9d9d9d", stroke=4, fontsize=100)
+        img1 = render_number_image(d1, "#b06cff", stroke=5, fontsize=100)
+        img2 = render_number_image(d2, "#9d9d9d", stroke=5, fontsize=100)
 
         l1 = tk.Label(frame, image=img1, bg="#222")
         l2 = tk.Label(frame, image=img2, bg="#222")
+
         l1.image = img1
         l2.image = img2
 
-        l1.pack(side="left", padx=22)
-        l2.pack(side="left", padx=22)
+        l1.pack(side="left", padx=20)
+        l2.pack(side="left", padx=20)
 
-    # ========== Resultado ==========
-    normalized = result_name.strip().title()
-    color = RESULT_COLORS.get(normalized, "#ffffff")
+    # ---------- RESULTADO ----------
+    norm = result_name.strip().title()
+    color = RESULT_COLORS.get(norm, "#ffffff")
 
-    banner = render_result_banner(normalized, color)
+    banner = render_result_banner(norm, color)
     lb = tk.Label(frame, image=banner, bg="#222")
     lb.image = banner
     lb.pack(pady=25)
 
-    # Botão
-    tk.Button(frame, text="OK", command=win.destroy,
-              font=("Metal Mania", 20)).pack(pady=10)
+    # ---------- OK ----------
+    tk.Button(
+        frame,
+        text="OK",
+        font=("Metal Mania", 20),
+        command=win.destroy
+    ).pack(pady=10)
 
-    # Centralização
+    # ---------- Centralizar ----------
     def center():
         win.update_idletasks()
         w, h = win.winfo_width(), win.winfo_height()
+
         x = win.winfo_screenwidth() // 2 - w // 2
         y = win.winfo_screenheight() // 2 - h // 2
+
         win.geometry(f"{w}x{h}+{x}+{y}")
         win.focus_force()
         win.grab_set()

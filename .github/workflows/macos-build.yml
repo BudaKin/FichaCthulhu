@@ -21,15 +21,18 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller Pillow
-        # pip install -r requirements.txt  # se tiver outras dependências
+        pip install pyinstaller Pillow ttkbootstrap
 
     - name: Build .app
       run: |
         pyinstaller \
           --windowed \
+          --name cthulhu \
           --icon=assets/cthulhu.icns \
-          --add-data "assets/cthulhu.icns:assets" \
+          --add-data "assets:assets" \
+          --hidden-import PIL.Image \
+          --hidden-import PIL.ImageTk \
+          --hidden-import PIL._imagingtk \
           main.py
 
     - name: Upload artifact

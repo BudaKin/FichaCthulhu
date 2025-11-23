@@ -29,10 +29,12 @@ jobs:
         pyinstaller `
           --onefile `
           --windowed `
-          --hidden-import PIL._tkinter_finder `
           --name cthulhu `
           --icon=assets/cthulhu.ico `
           --add-data "assets;assets" `
+          --hidden-import PIL.Image `
+          --hidden-import PIL.ImageTk `
+          --hidden-import PIL._imagingtk `
           main.py
 
     - name: Prepare release folder
@@ -41,7 +43,7 @@ jobs:
         mkdir LixoEnterprise
         Copy-Item dist\cthulhu.exe LixoEnterprise\cthulhu.exe
 
-        # Copia assets se precisar externamente
+        # Copia assets apenas se quiser distribuir junto
         if (Test-Path assets) {
           Copy-Item assets LixoEnterprise\assets -Recurse
         }

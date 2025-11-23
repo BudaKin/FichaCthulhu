@@ -43,10 +43,31 @@ Este projeto é um editor de fichas para RPG que utiliza um sistema baseado em C
 
 ## Instalação via pyinstaller
 
-comando para utilizar: pyinstaller --onefile --noconsole --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico;assets" main.py
+comando para utilizar: 
+
+pyinstaller `
+  --onefile `
+  --windowed `
+  --icon=assets/cthulhu.ico `
+  --add-data "assets;assets" `
+  --hidden-import=PIL.Image `
+  --hidden-import=PIL.ImageTk `
+  --hidden-import=PIL._imagingtk `
+  main.py
+
 
 Obs: se for usar linux ou mac, trocar para: 
 
-pyinstaller --onefile --noconsole --icon=assets/cthulhu.ico --add-data "assets/cthulhu.ico:assets" main.py
+pyinstaller \
+  --onefile \
+  --windowed \
+  --icon=assets/cthulhu.ico \
+  --add-data "assets:assets" \
+  --hidden-import=PIL._tkinter_finder \
+  --hidden-import=PIL.ImageTk \
+  --hidden-import=PIL.Image \
+  --hidden-import=PIL._imaging \
+  --hidden-import=PIL._imagingtk \
+  main.py
 
 ---
