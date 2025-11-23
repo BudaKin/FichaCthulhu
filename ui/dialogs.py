@@ -64,14 +64,6 @@ def _load_font(fontsize):
 # ======================================================
 def render_number_image(number, color, stroke=3, fontsize=72):
 
-    # Escala dependendo do sistema
-    if sys.platform.startswith("win"):
-        scale = 2.4
-    elif sys.platform.startswith("linux"):
-        scale = 1.2
-    else:
-        scale = 1.4
-
     fontsize = int(fontsize * scale)
     stroke   = int(stroke * scale)
 
