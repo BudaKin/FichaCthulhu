@@ -42,9 +42,7 @@ jobs:
         Copy-Item assets LixoEnterprise\assets -Recurse
 
     - name: Install NSIS
-      uses: crazy-max/ghaction-nsis@v3
-      with:
-        version: "3.09"
+      run: choco install nsis -y
 
     - name: Build installer
       run: makensis installer.nsi
