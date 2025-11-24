@@ -45,7 +45,10 @@ jobs:
       run: choco install nsis -y
 
     - name: Build installer
-      run: "\"C:/Program Files (x86)/NSIS/makensis.exe\" installer.nsi"
+      run: |
+        $nsis = "C:/Program Files (x86)/NSIS/makensis.exe"
+        & $nsis "installer.nsi"
+
 
 
     - name: Upload Installer
