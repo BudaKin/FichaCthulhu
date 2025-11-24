@@ -32,35 +32,25 @@ jobs:
           --name cthulhu `
           --icon=assets/cthulhu.ico `
           --add-data "assets;assets" `
-          --hidden-import PIL.Image `
-          --hidden-import PIL.ImageTk `
-          --hidden-import PIL._imagingtk `
           main.py
 
-    - name: Prepare release folder
+    - name: Prepare installer folder
       shell: powershell
       run: |
         mkdir LixoEnterprise
         Copy-Item dist\cthulhu.exe LixoEnterprise\cthulhu.exe
+        Copy-Item assets LixoEnterprise\assets -Recurse
 
-        # Copia assets apenas se quiser distribuir junto
-        if (Test-Path assets) {
-          Copy-Item assets LixoEnterprise\assets -Recurse
-        }
+    - name: Install NSIS
+      uses: crazy-max/ghaction-nsis@v3
+      with:
+        version: "3.09"
 
-    - name: Create ZIP
-      shell: powershell
-      run: |
-        Compress-Archive -Path "LixoEnterprise\*" -DestinationPath "LixoEnterprise.zip"
+    - name: Build installer
+      run: makensis installer.nsi
 
-    - name: Upload EXE
+    - name: Upload Installer
       uses: actions/upload-artifact@v4
       with:
-        name: app-exe
-        path: LixoEnterprise\cthulhu.exe
-
-    - name: Upload ZIP
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-zip
-        path: LixoEnterprise.zip
+        name: Windows-Installer
+        path: LixoEnterpriseInstaller.exe
