@@ -20,13 +20,18 @@ def roll_d100_check(valor):
     """
     r = random.randint(1, 100)
 
-    if r == 100 or r > valor * 4:
+
+    if r == 100 :
+        resultado = "Desastre Absoluto"
+    elif r == 1:
+        resultado = "Extremo Caótico"
+    elif r > valor * 4:
         resultado = "Desastre"
     elif r > valor * 2:
         resultado = "Péssimo"
     elif r > valor:
         resultado = "Ruim"
-    elif r == 1 or r < max(1, valor // 4):
+    elif r < max(1, valor // 4):
         resultado = "Extremo"
     elif r <= valor // 2:
         resultado = "Bom"
@@ -50,7 +55,13 @@ def roll_2d12_check(valor):
     soma = d1 + d2
 
     # ---- CLASSIFICAÇÃO ----
-    if (d1 == d2 and soma > valor) or (d1 == 12 and d2 == 12):
+    if (d1 == 1 and d2 == 1):
+        resultado = "Extremo Caótico"
+    elif (d1 == 12 and d2 == 12):
+        resultado = "Desastre Absoluto"
+    elif (d1 == d2 and soma <= valor):
+        resultado = "Extremo"
+    elif (d1 == d2 and soma > valor):
         resultado = "Desastre"
     elif d1 < d2 and soma > valor:
         resultado = "Péssimo"
@@ -60,8 +71,6 @@ def roll_2d12_check(valor):
         resultado = "Normal"
     elif d1 > d2 and soma <= valor:
         resultado = "Bom"
-    elif (d1 == d2 and soma <= valor) or (d1 == 1 and d2 == 1):
-        resultado = "Extremo"
     else:
         resultado = "Indefinido"
 

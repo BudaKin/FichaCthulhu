@@ -322,7 +322,10 @@ class PerditioGUI(tb.Window):
                 "ruim": "Ruim",
                 "péssimo": "Péssimo",
                 "pessimo": "Péssimo",
-                "desastre": "Desastre"
+                "desastre": "Desastre",
+                "extremo caótico": "Extremo Caótico",
+                "extremo caotico": "Extremo Caótico",
+                "desastre absoluto": "Desastre Absoluto"
             }
 
             # 🔥 Nome FINAL padronizado (como você faz com dados)

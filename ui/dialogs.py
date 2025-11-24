@@ -7,12 +7,14 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 #   Mapa de Cores do Resultado
 # ======================================================
 RESULT_COLORS = {
-    "Extremo": "#e025b7",
+    "Extremo": "#f50052",
     "Bom":     "#fffd6d",
     "Normal":  "#ffffff",
     "Ruim":    "#60c075",
     "Péssimo": "#815100",
     "Desastre":"#8481ff",
+    "Desastre Absoluto":"#a703ff",
+    "Extremo Caótico": "#e025b7",
 }
 
 
